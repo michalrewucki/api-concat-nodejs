@@ -1,0 +1,22 @@
+{
+  "name": "api-concat-gcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-json-modules ./server.js",
+    "watch": "nodemon --experimental-json-modules --ext js,pug --ignore public"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "joi": "^17.4.2",
+    "morgan": "~1.9.1",
+    "node-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
