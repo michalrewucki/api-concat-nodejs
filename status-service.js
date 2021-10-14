@@ -1,17 +1,28 @@
 import fetch from "node-fetch";
 import apiConfigs from "./api-configs.json";
+import HTTPResponseError from "./exception.js";
 
 async function getCityStatus(cityName) {
     let geoDataPromise = getGeoData(cityName);
     let weatherPromise = getWeather(cityName);
     let airQualityPromise = getAirQuality(cityName);
     let responses = await Promise.all([geoDataPromise, weatherPromise, airQualityPromise]);
+
     return {
         'cityName': cityName,
         'weather': mapWeather(responses[1]),
         'airQuality': mapAirQuality(responses[2]),
         'geoData': mapGeoData(responses[0])
     };
+}
+
+function checkStatus(response) {
+    if (response.ok) {
+        // response.status >= 200 && response.status < 300
+        return response;
+    } else {
+        throw new HTTPResponseError(response);
+    }
 }
 
 function mapGeoData(geoDataResponse) {
@@ -41,6 +52,7 @@ async function getWeather(cityName) {
     console.log(`Calling OpenWeather API for city data: ${cityName}`)
     const key = apiConfigs.openWeatherMapData.apiKey;
     const response = await fetch(apiConfigs.openWeatherMapData.url + `?q=${cityName}&appId=${key}`);
+    checkStatus(response);
     return await response.json();
 }
 
@@ -48,6 +60,7 @@ async function getAirQuality(cityName) {
     console.log(`Calling AirQualityOpenData API for city data: ${cityName}`)
     const key = apiConfigs.airQualityOpenData.apiKey;
     const response = await fetch(apiConfigs.airQualityOpenData.url + `/${cityName}/?token=${key}`);
+    checkStatus(response);
     return await response.json();
 }
 
@@ -55,6 +68,7 @@ async function getGeoData(cityName) {
     console.log(`Calling OpenCageGeoData API for city data: ${cityName}`)
     const key = apiConfigs.openCageData.apiKey;
     const response = await fetch(apiConfigs.openCageData.url + `?key=${key}&q=${cityName}`);
+    checkStatus(response);
     return await response.json();
 }
 
